@@ -1,70 +1,51 @@
-# Getting Started with Create React App
+# Jotform Frontend Challenge Project
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## User Information
+Please fill in your information after forking this repository:
 
-## Available Scripts
+- **Name**: Kerem Ergün
 
-In the project directory, you can run:
+## Project Description
+This project is an investigation dashboard for The Ankara Case built with React. It pulls data from multiple Jotform sources, normalizes records into unified person profiles, and helps analyze suspect activity. It includes features such as: Raw Submission view, Intelegence Analysis View, Map View and Suspicion Scoring Component to analize and track the movements of the people in the forms and make educated assumptions on "Podo"s mising.
 
-### `npm start`
+## Getting Started
+Make sure these are installed:
+- **Node.js** 
+- **npm** 
+- **Git**
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+Run the following commands:
+git clone https://github.com/<your-username>/2026-frontend-challenge-ankara.git
+cd 2026-frontend-challenge-ankara
+npm install
+npm install --legacy-peer-deps
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+- **Create a .env file in the project root and add your Jotform API keys:**
+touch .env
+- **example:**
+**REACT_APP_JOTFORM_API_KEY_1=your_key_1**
+**REACT_APP_JOTFORM_API_KEY_2=your_key_2**
+**REACT_APP_JOTFORM_API_KEY_3=your_key_3**
 
-### `npm test`
+npm start
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
 
-### `npm run build`
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+# 🚀 Challenge Duyurusu
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## 📅 Tarih ve Saat
+Cumartesi günü başlama saatinden itibaren üç saattir.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## 🎯 Challenge Konsepti
+Bu challenge'da, size özel hazırlanmış bir senaryo üzerine web uygulaması geliştirmeniz istenecektir. Challenge başlangıcında senaryo detayları paylaşılacaktır.Katılımcılar, verilen GitHub reposunu fork ederek kendi geliştirme ortamlarını oluşturacaklardır.
 
-### `npm run eject`
+## 📦 GitHub Reposu
+Challenge için kullanılacak repo: https://github.com/cemjotform/2026-frontend-challenge-ankara
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+## 🛠️ Hazırlık Süreci
+1. GitHub reposunu fork edin
+2. Tercih ettiğiniz framework ile geliştirme ortamınızı hazırlayın
+3. Hazırladığınız setup'ı fork ettiğiniz repoya gönderin
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+## 💡 Önemli Notlar
+- Katılımcılar kendi tercih ettikleri framework'leri kullanabilirler
