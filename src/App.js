@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import './App.css';
 import InvestigationDashboard from './components/InvestigationDashboard';
 import MapViewDashboard from './components/MapViewDashboard';
+import SuspicionDashboard from './components/SuspicionDashboard';
 import RawSubmissionsDashboard from './components/RawSubmissionsDashboard';
 import { getAllFormSubmissions } from './services/jotformService';
 
@@ -63,7 +64,7 @@ function App() {
         >
           🔬 Intelligence Analysis
         </button>
-        
+
         <button
           className={`tab-btn ${activeTab === 'map' ? 'active' : ''}`}
           onClick={() => setActiveTab('map')}
@@ -72,12 +73,19 @@ function App() {
         </button>
 
         <button
+          className={`tab-btn ${activeTab === 'suspicion' ? 'active' : ''}`}
+          onClick={() => setActiveTab('suspicion')}
+        >
+          🚨 Suspicion Scoring
+        </button>
+
+        <button
           className={`tab-btn ${activeTab === 'submissions' ? 'active' : ''}`}
           onClick={() => setActiveTab('submissions')}
         >
           📋 Raw Submissions
         </button>
-        
+
       </div>
 
       <main className="App-main">
@@ -97,6 +105,16 @@ function App() {
 
         {activeTab === 'map' && (
           <MapViewDashboard
+            checkins={allData.checkins}
+            messages={allData.messages}
+            sightings={allData.sightings}
+            personalNotes={allData.personalNotes}
+            anonymousTips={allData.anonymousTips}
+          />
+        )}
+
+        {activeTab === 'suspicion' && (
+          <SuspicionDashboard
             checkins={allData.checkins}
             messages={allData.messages}
             sightings={allData.sightings}
