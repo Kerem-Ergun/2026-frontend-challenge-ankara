@@ -275,6 +275,9 @@ const InvestigationDashboard = ({
                                         <div key={checkin.checkinId} className="list-item">
                                             <span className="timestamp">{checkin.timestamp.toLocaleString()}</span>
                                             <span className="content">{checkin.location}</span>
+                                            {checkin.notes && String(checkin.notes).trim() && (
+                                                <span className="notes">{String(checkin.notes).trim()}</span>
+                                            )}
                                         </div>
                                     ))}
                                 </div>
@@ -290,6 +293,20 @@ const InvestigationDashboard = ({
                                             <p className="message-time">{msg.timestamp.toLocaleString()}</p>
                                             <p className="message-to">To: {msg.recipient}</p>
                                             <p className="message-content">"{msg.content}"</p>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
+                        {selectedPerson.notes.length > 0 && (
+                            <div className="detail-section">
+                                <h4>📝 Personal Notes</h4>
+                                <div className="messages-list">
+                                    {selectedPerson.notes.map((note) => (
+                                        <div key={note.noteId} className="message-item">
+                                            <p className="message-time">{note.timestamp?.toLocaleString()}</p>
+                                            <p className="message-content">"{note.content}"</p>
                                         </div>
                                     ))}
                                 </div>

@@ -11,11 +11,19 @@ import { getJotformTimestampMs, parseJotformDate } from '../utils/dateTime';
  */
 export const normalizeName = (name) => {
     if (!name) return '';
-    return name
-        .toLowerCase()
-        .trim()
+    return String(name)
+        .toLocaleLowerCase('tr')
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/ı/g, 'i')
+        .replace(/ğ/g, 'g')
+        .replace(/ş/g, 's')
+        .replace(/ç/g, 'c')
+        .replace(/ö/g, 'o')
+        .replace(/ü/g, 'u')
+        .replace(/[^\p{L}\p{N}\s]/gu, ' ')
         .replace(/\s+/g, ' ')
-        .replace(/[^\w\s]/g, ''); // Remove special characters
+        .trim();
 };
 
 const toSafeText = (value) => {
@@ -164,7 +172,7 @@ export const findOrCreatePerson = (people, name, threshold = 0.85) => {
     }
 
     // Fuzzy match
-    for (const [key, profile] of people.entries()) {
+    for (const profile of people.values()) {
         const score = getSimilarityScore(name, profile.name);
         if (score >= threshold) {
             profile.aliases.add(name);
@@ -210,8 +218,9 @@ export const normalizeFormData = (
 
     // Parse Check-ins
     checkins.forEach((checkin) => {
-        const person = checkin.answers?.[Object.keys(checkin.answers)[0]]?.answer || 'Unknown';
-        const location = checkin.answers?.[Object.keys(checkin.answers)[1]]?.answer || 'Unknown';
+        const person = getAnswerValueByKeywords(checkin.answers, ['person', 'name', 'who', 'kim', 'kişi'], 0) || 'Unknown';
+        const location = getAnswerValueByKeywords(checkin.answers, ['location', 'where', 'nerede', 'konum', 'mekan', 'mekân'], 1) || 'Unknown';
+        const notes = getAnswerValueByKeywords(checkin.answers, ['note', 'notes', 'açıklama', 'aciklama', 'not'], 2) || '';
 
         // Try to get timestamp from form answers first, fall back to submission time
         const formTimestamp = getTimestampFromAnswers(checkin.answers);
@@ -227,7 +236,7 @@ export const normalizeFormData = (
             timestampMs,
             createdAtRaw: rawTimestamp,
             checkinId: checkin.id,
-            notes: checkin.answers?.[Object.keys(checkin.answers)[2]]?.answer
+            notes: notes || null
         };
 
         personProfile.checkins.push(checkInRecord);
@@ -257,9 +266,9 @@ export const normalizeFormData = (
 
     // Parse Messages
     messages.forEach((message) => {
-        const sender = message.answers?.[Object.keys(message.answers)[0]]?.answer || 'Unknown';
-        const recipient = message.answers?.[Object.keys(message.answers)[1]]?.answer || 'Unknown';
-        const content = message.answers?.[Object.keys(message.answers)[2]]?.answer || '';
+        const sender = getAnswerValueByKeywords(message.answers, ['sender', 'from', 'gönderen', 'kişi'], 0) || 'Unknown';
+        const recipient = getAnswerValueByKeywords(message.answers, ['recipient', 'to', 'alan', 'alıcı'], 1) || 'Unknown';
+        const content = getAnswerValueByKeywords(message.answers, ['content', 'message', 'text', 'mesaj', 'içerik'], 2) || '';
 
         // Try to get timestamp from form answers first, fall back to submission time
         const formTimestamp = getTimestampFromAnswers(message.answers);
@@ -372,8 +381,8 @@ export const normalizeFormData = (
 
     // Parse Personal Notes
     personalNotes.forEach((note) => {
-        const author = note.answers?.[Object.keys(note.answers)[0]]?.answer || 'Unknown';
-        const content = note.answers?.[Object.keys(note.answers)[1]]?.answer || '';
+        const author = getAnswerValueByKeywords(note.answers, ['author', 'person', 'who', 'kim', 'kişi'], 0) || 'Unknown';
+        const content = getAnswerValueByKeywords(note.answers, ['content', 'note', 'notes', 'text', 'mesaj', 'içerik'], 1) || '';
 
         // Try to get timestamp from form answers first, fall back to submission time
         const formTimestamp = getTimestampFromAnswers(note.answers);
@@ -405,8 +414,8 @@ export const normalizeFormData = (
 
     // Parse Anonymous Tips
     anonymousTips.forEach((tip) => {
-        const content = tip.answers?.[Object.keys(tip.answers)[0]]?.answer || '';
-        const location = tip.answers?.[Object.keys(tip.answers)[1]]?.answer;
+        const content = getAnswerValueByKeywords(tip.answers, ['content', 'tip', 'message', 'text', 'mesaj', 'bilgi'], 0) || '';
+        const location = getAnswerValueByKeywords(tip.answers, ['location', 'where', 'nerede', 'konum', 'mekan', 'mekân'], 1) || null;
 
         // Try to get timestamp from form answers first, fall back to submission time
         const formTimestamp = getTimestampFromAnswers(tip.answers);
