@@ -1,0 +1,46 @@
+.map-dashboard {
+    width: 100%;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid #ddd;
+}
+
+.suspect-map {
+    width: 100%;
+    height: clamp(260px, 40vh, 420px);
+}
+
+.map-event-marker {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    border: 2px solid #fff;
+    font-weight: 700;
+    color: #fff;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+.map-event-marker span {
+    font-size: 12px;
+    line-height: 1;
+}
+
+.map-event-marker--sighting {
+    background: #e74c3c;
+}
+
+.map-event-marker--checkin {
+    background: #2d7ff9;
+}
+
+.map-popup p {
+    margin: 4px 0;
+    font-size: 12px;
+}
+
+@media (max-width: 768px) {
+    .suspect-map {
+        height: 280px;
+    }
+}

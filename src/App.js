@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import './App.css';
 import InvestigationDashboard from './components/InvestigationDashboard';
+import MapViewDashboard from './components/MapViewDashboard';
 import RawSubmissionsDashboard from './components/RawSubmissionsDashboard';
 import { getAllFormSubmissions } from './services/jotformService';
 
@@ -62,6 +63,14 @@ function App() {
         >
           🔬 Intelligence Analysis
         </button>
+        
+        <button
+          className={`tab-btn ${activeTab === 'map' ? 'active' : ''}`}
+          onClick={() => setActiveTab('map')}
+        >
+          🗺️ Map View
+        </button>
+
         <button
           className={`tab-btn ${activeTab === 'submissions' ? 'active' : ''}`}
           onClick={() => setActiveTab('submissions')}
@@ -84,6 +93,16 @@ function App() {
 
         {activeTab === 'submissions' && (
           <RawSubmissionsDashboard />
+        )}
+
+        {activeTab === 'map' && (
+          <MapViewDashboard
+            checkins={allData.checkins}
+            messages={allData.messages}
+            sightings={allData.sightings}
+            personalNotes={allData.personalNotes}
+            anonymousTips={allData.anonymousTips}
+          />
         )}
 
 

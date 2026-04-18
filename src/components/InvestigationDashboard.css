@@ -190,6 +190,17 @@
     position: relative;
 }
 
+.timeline-item.clickable {
+    cursor: pointer;
+}
+
+.timeline-item.active .timeline-content {
+    background: #fff;
+    border: 1px solid #f2b5ad;
+    border-radius: 6px;
+    padding: 8px 10px;
+}
+
 .timeline-marker {
     position: absolute;
     left: -30px;
@@ -240,6 +251,12 @@
     font-weight: 500;
 }
 
+.timeline-type {
+    color: #2c3e50;
+    font-size: 12px;
+    font-weight: 600;
+}
+
 .timeline-with {
     color: #666;
     font-style: italic;
@@ -249,6 +266,27 @@
     color: #999;
     font-size: 12px;
     margin-top: 5px;
+}
+
+.timeline-missing-coords {
+    color: #b26a00;
+    font-size: 11px;
+    margin-top: 4px;
+}
+
+.map-empty-state {
+    background: #fff;
+    border: 1px dashed #ccc;
+    border-radius: 6px;
+    padding: 10px 12px;
+    color: #666;
+    font-size: 13px;
+}
+
+.map-warning {
+    margin: 10px 0 0;
+    color: #7f6000;
+    font-size: 12px;
 }
 
 /* Items Lists */
