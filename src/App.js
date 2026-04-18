@@ -12,7 +12,7 @@ function App() {
     personalNotes: [],
     anonymousTips: []
   });
-  const [activeTab, setActiveTab] = useState('submissions');
+  const [activeTab, setActiveTab] = useState('analysis');
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -57,17 +57,18 @@ function App() {
 
       <div className="tab-navigation">
         <button
-          className={`tab-btn ${activeTab === 'submissions' ? 'active' : ''}`}
-          onClick={() => setActiveTab('submissions')}
-        >
-          📋 Raw Submissions
-        </button>
-        <button
           className={`tab-btn ${activeTab === 'analysis' ? 'active' : ''}`}
           onClick={() => setActiveTab('analysis')}
         >
           🔬 Intelligence Analysis
         </button>
+        <button
+          className={`tab-btn ${activeTab === 'submissions' ? 'active' : ''}`}
+          onClick={() => setActiveTab('submissions')}
+        >
+          📋 Raw Submissions
+        </button>
+        
       </div>
 
       <main className="App-main">

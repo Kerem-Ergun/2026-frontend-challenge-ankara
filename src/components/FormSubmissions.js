@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { getFormData } from '../services/jotformService';
+import { formatJotformDate } from '../utils/dateTime';
 import './FormSubmissions.css';
 
 const FormSubmissions = ({ formName, displayName }) => {
@@ -62,7 +63,7 @@ const FormSubmissions = ({ formName, displayName }) => {
                             {expandedId === submission.id && (
                                 <div className="submission-content">
                                     <p className="submission-date">
-                                        Date: {new Date(submission.created_at).toLocaleString()}
+                                        Date: {formatJotformDate(submission.created_at)}
                                     </p>
                                     <div className="submission-answers">
                                         {Object.entries(submission.answers).map((answer) => (

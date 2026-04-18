@@ -1,11 +1,92 @@
 import React, { useState, useEffect } from 'react';
 import {
     normalizeFormData,
-    getChainOfSightings,
-    findLocationBasedConnections,
-    exportInvestigationData
+    normalizeName
 } from '../services/dataNormalization';
+import { formatJotformDate, getJotformTimestampMs } from '../utils/dateTime';
 import './InvestigationDashboard.css';
+
+const normalizeSearchText = (value) =>
+    String(value || '')
+        .toLocaleLowerCase('tr')
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/[^\p{L}\p{N}\s]/gu, ' ')
+        .replace(/ı/g, 'i')
+        .replace(/\s+/g, ' ')
+        .trim();
+
+const extractAnswerText = (value) => {
+    if (value === null || value === undefined) return '';
+    if (typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean') return String(value);
+    if (Array.isArray(value)) return value.map((item) => extractAnswerText(item)).filter(Boolean).join(', ');
+    if (typeof value === 'object') {
+        const preferredKeys = ['prettyFormat', 'fullName', 'addr_line1', 'city', 'state', 'country'];
+        const preferredValues = preferredKeys
+            .map((key) => value[key])
+            .filter((item) => item !== null && item !== undefined && String(item).trim() !== '');
+
+        if (preferredValues.length > 0) {
+            return preferredValues.map((item) => String(item)).join(' ');
+        }
+
+        return Object.values(value).map((item) => extractAnswerText(item)).filter(Boolean).join(' ');
+    }
+    return '';
+};
+
+const getAnswerByKeywords = (answers, keywords, fallbackIndex = 0) => {
+    const answerList = Object.values(answers || {});
+    const normalizedKeywords = keywords.map((keyword) => normalizeSearchText(keyword));
+
+    const matched = answerList.find((answer) => {
+        const searchable = normalizeSearchText(`${answer?.text || ''} ${answer?.name || ''} ${answer?.prettyText || ''}`);
+        return normalizedKeywords.some((keyword) => searchable.includes(keyword));
+    });
+
+    return extractAnswerText(matched?.answer ?? answerList[fallbackIndex]?.answer);
+};
+
+const mapRawSighting = (submission) => {
+    const answers = submission?.answers || {};
+    const spottedPerson = getAnswerByKeywords(answers, ['spotted person', 'who', 'kim', 'person'], 0);
+    const spottedWithRaw = getAnswerByKeywords(answers, ['spotted with', 'with', 'beraber', 'yanında', 'yaninda'], 1);
+    const location = getAnswerByKeywords(answers, ['location', 'where', 'nerede', 'konum', 'mekan', 'mekân'], 2);
+    const description = getAnswerByKeywords(answers, ['description', 'details', 'açıklama', 'aciklama', 'note'], 3);
+
+    // Extract timestamp from form answers (look for "Timestamp" field)
+    const answerList = Object.values(answers || {});
+    const timestampAnswer = answerList.find((answer) => {
+        const answerText = String(answer?.text || '').trim();
+        const answerName = String(answer?.name || '').trim();
+        const prettyText = String(answer?.prettyText || '').trim();
+
+        return (
+            answerText === 'Timestamp' ||
+            answerName === 'Timestamp' ||
+            prettyText === 'Timestamp' ||
+            answerText.toLowerCase() === 'timestamp' ||
+            answerName.toLowerCase() === 'timestamp' ||
+            prettyText.toLowerCase() === 'timestamp'
+        );
+    });
+
+    const formTimestampRaw = timestampAnswer?.answer ? extractAnswerText(timestampAnswer.answer) : null;
+    const createdAtRaw = formTimestampRaw || submission?.created_at;
+
+    return {
+        id: submission?.id,
+        spottedPerson,
+        spottedWith: spottedWithRaw
+            .split(',')
+            .map((item) => item.trim())
+            .filter(Boolean),
+        location,
+        description,
+        createdAtRaw,
+        timestampMs: getJotformTimestampMs(createdAtRaw)
+    };
+};
 
 const InvestigationDashboard = ({
     checkins = [],
@@ -39,6 +120,10 @@ const InvestigationDashboard = ({
         }
     }, [checkins, messages, sightings, personalNotes, anonymousTips]);
 
+    useEffect(() => {
+        setFilterLocation('');
+    }, [selectedPerson?.normalizedName]);
+
     if (loading) {
         return <div className="investigation-dashboard loading">Processing investigation data...</div>;
     }
@@ -56,6 +141,29 @@ const InvestigationDashboard = ({
     );
 
     const locations = Array.from(investigationData.locationCluster.keys()).sort();
+    const chainOfSightings = selectedPerson
+        ? (() => {
+            const personNames = new Set(
+                [selectedPerson.name, ...Array.from(selectedPerson.aliases || [])]
+                    .map((name) => normalizeName(name))
+                    .filter(Boolean)
+            );
+
+            const normalizedFilter = normalizeSearchText(filterLocation);
+
+            return (sightings || [])
+                .map((submission) => mapRawSighting(submission))
+                .filter((item) => personNames.has(normalizeName(item.spottedPerson)))
+                .filter((item) => {
+                    if (!normalizedFilter) return true;
+                    const normalizedLocation = normalizeSearchText(item.location);
+                    if (normalizedLocation.includes(normalizedFilter)) return true;
+                    const tokens = normalizedFilter.split(' ').filter(Boolean);
+                    return tokens.every((token) => normalizedLocation.includes(token));
+                })
+                .sort((a, b) => a.timestampMs - b.timestampMs);
+        })()
+        : [];
 
     return (
         <div className="investigation-dashboard">
@@ -120,26 +228,30 @@ const InvestigationDashboard = ({
                             <p><strong>Aliases:</strong> {Array.from(selectedPerson.aliases).join(', ')}</p>
                         </div>
 
-                        {selectedPerson.sightings.asSubject.length > 0 && (
-                            <div className="detail-section">
-                                <h4>👁️ Chain of Sightings</h4>
-                                <div className="location-filter">
-                                    <input
-                                        type="text"
-                                        placeholder="Filter by location (e.g., Kızılay, Bahçelievler)"
-                                        value={filterLocation}
-                                        onChange={(e) => setFilterLocation(e.target.value)}
-                                    />
-                                </div>
-                                <div className="sightings-timeline">
-                                    {getChainOfSightings(selectedPerson, filterLocation).sightings.map((sighting, idx) => (
-                                        <div key={idx} className="timeline-item">
+                        <div className="detail-section">
+                            <h4>👁️ Chain of Sightings</h4>
+                            <div className="location-filter">
+                                <input
+                                    type="text"
+                                    placeholder="Filter by location (e.g., Kızılay, Bahçelievler)"
+                                    value={filterLocation}
+                                    onChange={(e) => setFilterLocation(e.target.value.trimStart())}
+                                />
+                            </div>
+                            <div className="sightings-timeline">
+                                {chainOfSightings.length === 0 ? (
+                                    <p className="timeline-description">
+                                        No sightings match this location filter.
+                                    </p>
+                                ) : (
+                                    chainOfSightings.map((sighting, idx) => (
+                                        <div key={sighting.id || idx} className="timeline-item">
                                             <div className="timeline-marker">
                                                 <span className="timeline-dot"></span>
                                             </div>
                                             <div className="timeline-content">
-                                                <p className="timeline-time">{sighting.timestamp.toLocaleString()}</p>
-                                                <p className="timeline-location">📍 {sighting.location}</p>
+                                                <p className="timeline-time">{formatJotformDate(sighting.createdAtRaw)}</p>
+                                                <p className="timeline-location">📍 {sighting.location || 'Unknown'}</p>
                                                 {sighting.spottedWith.length > 0 && (
                                                     <p className="timeline-with">
                                                         👥 With: {sighting.spottedWith.join(', ')}
@@ -150,10 +262,10 @@ const InvestigationDashboard = ({
                                                 )}
                                             </div>
                                         </div>
-                                    ))}
-                                </div>
+                                    ))
+                                )}
                             </div>
-                        )}
+                        </div>
 
                         {selectedPerson.checkins.length > 0 && (
                             <div className="detail-section">

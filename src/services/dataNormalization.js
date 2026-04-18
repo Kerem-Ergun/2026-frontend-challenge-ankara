@@ -3,6 +3,8 @@
  * Aggregates data from multiple Jotform submissions and creates a master record by person
  */
 
+import { getJotformTimestampMs, parseJotformDate } from '../utils/dateTime';
+
 /**
  * Normalize a person's name for matching
  * Handles different spellings, case sensitivity, extra spaces
@@ -14,6 +16,103 @@ export const normalizeName = (name) => {
         .trim()
         .replace(/\s+/g, ' ')
         .replace(/[^\w\s]/g, ''); // Remove special characters
+};
+
+const toSafeText = (value) => {
+    if (value === null || value === undefined) return '';
+    if (typeof value === 'string') return value;
+    if (typeof value === 'number' || typeof value === 'boolean') return String(value);
+    if (Array.isArray(value)) return value.join(' ');
+    return JSON.stringify(value);
+};
+
+const normalizeSearchText = (value) =>
+    toSafeText(value)
+        .toLocaleLowerCase('tr')
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/[^\p{L}\p{N}\s]/gu, ' ')
+        .replace(/ı/g, 'i')
+        .replace(/\s+/g, ' ')
+        .trim();
+
+const extractAnswerText = (answerValue) => {
+    if (answerValue === null || answerValue === undefined) return '';
+    if (typeof answerValue === 'string' || typeof answerValue === 'number' || typeof answerValue === 'boolean') {
+        return String(answerValue);
+    }
+    if (Array.isArray(answerValue)) {
+        return answerValue.map((item) => extractAnswerText(item)).filter(Boolean).join(', ');
+    }
+    if (typeof answerValue === 'object') {
+        const preferredKeys = ['prettyFormat', 'fullName', 'addr_line1', 'city', 'state', 'country'];
+        const preferredValues = preferredKeys
+            .map((key) => answerValue[key])
+            .filter((value) => value !== null && value !== undefined && String(value).trim() !== '');
+
+        if (preferredValues.length > 0) {
+            return preferredValues.map((value) => String(value)).join(' ');
+        }
+
+        return Object.values(answerValue)
+            .map((value) => extractAnswerText(value))
+            .filter(Boolean)
+            .join(' ');
+    }
+
+    return '';
+};
+
+const getAnswerValueByKeywords = (answers, keywords, fallbackIndex = 0) => {
+    if (!answers || typeof answers !== 'object') return '';
+
+    const answerList = Object.values(answers);
+    const lowerKeywords = keywords.map((keyword) => normalizeSearchText(keyword));
+
+    const matchedAnswer = answerList.find((answer) => {
+        const searchable = normalizeSearchText(`${answer?.text || ''} ${answer?.name || ''} ${answer?.prettyText || ''}`);
+        return lowerKeywords.some((keyword) => searchable.includes(keyword));
+    });
+
+    if (matchedAnswer) {
+        return extractAnswerText(matchedAnswer.answer);
+    }
+
+    const fallbackAnswer = answerList[fallbackIndex];
+    return extractAnswerText(fallbackAnswer?.answer);
+};
+
+/**
+ * Extract timestamp from form answers by looking for the "Timestamp" field
+ * Returns timestamp string, or null if not found
+ */
+const getTimestampFromAnswers = (answers) => {
+    if (!answers || typeof answers !== 'object') return null;
+
+    const answerList = Object.values(answers);
+
+    // Look for exact "Timestamp" label match first
+    const timestampAnswer = answerList.find((answer) => {
+        const answerText = String(answer?.text || '').trim();
+        const answerName = String(answer?.name || '').trim();
+        const prettyText = String(answer?.prettyText || '').trim();
+
+        return (
+            answerText === 'Timestamp' ||
+            answerName === 'Timestamp' ||
+            prettyText === 'Timestamp' ||
+            answerText.toLowerCase() === 'timestamp' ||
+            answerName.toLowerCase() === 'timestamp' ||
+            prettyText.toLowerCase() === 'timestamp'
+        );
+    });
+
+    if (timestampAnswer && timestampAnswer.answer) {
+        const timestampValue = extractAnswerText(timestampAnswer.answer);
+        return timestampValue || null;
+    }
+
+    return null;
 };
 
 /**
@@ -113,13 +212,20 @@ export const normalizeFormData = (
     checkins.forEach((checkin) => {
         const person = checkin.answers?.[Object.keys(checkin.answers)[0]]?.answer || 'Unknown';
         const location = checkin.answers?.[Object.keys(checkin.answers)[1]]?.answer || 'Unknown';
-        const timestamp = new Date(checkin.created_at);
+
+        // Try to get timestamp from form answers first, fall back to submission time
+        const formTimestamp = getTimestampFromAnswers(checkin.answers);
+        const rawTimestamp = formTimestamp || checkin.created_at;
+        const timestampMs = getJotformTimestampMs(rawTimestamp);
+        const timestamp = parseJotformDate(rawTimestamp) || new Date(0);
 
         const personProfile = findOrCreatePerson(people, person);
         const checkInRecord = {
             person,
             location,
             timestamp,
+            timestampMs,
+            createdAtRaw: rawTimestamp,
             checkinId: checkin.id,
             notes: checkin.answers?.[Object.keys(checkin.answers)[2]]?.answer
         };
@@ -154,7 +260,12 @@ export const normalizeFormData = (
         const sender = message.answers?.[Object.keys(message.answers)[0]]?.answer || 'Unknown';
         const recipient = message.answers?.[Object.keys(message.answers)[1]]?.answer || 'Unknown';
         const content = message.answers?.[Object.keys(message.answers)[2]]?.answer || '';
-        const timestamp = new Date(message.created_at);
+
+        // Try to get timestamp from form answers first, fall back to submission time
+        const formTimestamp = getTimestampFromAnswers(message.answers);
+        const rawTimestamp = formTimestamp || message.created_at;
+        const timestampMs = getJotformTimestampMs(rawTimestamp);
+        const timestamp = parseJotformDate(rawTimestamp) || new Date(0);
 
         // Add record for sender
         const senderProfile = findOrCreatePerson(people, sender);
@@ -163,6 +274,8 @@ export const normalizeFormData = (
             recipient,
             content,
             timestamp,
+            timestampMs,
+            createdAtRaw: rawTimestamp,
             messageId: message.id
         };
         senderProfile.messages.push(messageRecord);
@@ -191,11 +304,20 @@ export const normalizeFormData = (
 
     // Parse Sightings
     sightings.forEach((sighting) => {
-        const spottedPerson = sighting.answers?.[Object.keys(sighting.answers)[0]]?.answer || 'Unknown';
-        const spottedWith = (sighting.answers?.[Object.keys(sighting.answers)[1]]?.answer || '').split(',').map((s) => s.trim());
-        const location = sighting.answers?.[Object.keys(sighting.answers)[2]]?.answer || 'Unknown';
-        const timestamp = new Date(sighting.created_at);
-        const description = sighting.answers?.[Object.keys(sighting.answers)[3]]?.answer;
+        const spottedPerson = getAnswerValueByKeywords(sighting.answers, ['spotted person', 'who', 'kim', 'person'], 0) || 'Unknown';
+        const spottedWithRaw = getAnswerValueByKeywords(sighting.answers, ['spotted with', 'with', 'beraber', 'yanında', 'yaninda'], 1);
+        const spottedWith = toSafeText(spottedWithRaw)
+            .split(',')
+            .map((s) => s.trim())
+            .filter(Boolean);
+        const location = getAnswerValueByKeywords(sighting.answers, ['location', 'where', 'nerede', 'konum', 'mekan', 'mekân'], 2) || 'Unknown';
+        const description = getAnswerValueByKeywords(sighting.answers, ['description', 'details', 'açıklama', 'aciklama', 'note'], 3);
+
+        // Try to get timestamp from form answers first, fall back to submission time
+        const formTimestamp = getTimestampFromAnswers(sighting.answers);
+        const rawTimestamp = formTimestamp || sighting.created_at;
+        const timestampMs = getJotformTimestampMs(rawTimestamp);
+        const timestamp = parseJotformDate(rawTimestamp) || new Date(0);
 
         const personProfile = findOrCreatePerson(people, spottedPerson);
         const sightingRecord = {
@@ -203,6 +325,8 @@ export const normalizeFormData = (
             spottedWith,
             location,
             timestamp,
+            timestampMs,
+            createdAtRaw: rawTimestamp,
             description,
             sightingId: sighting.id
         };
@@ -250,13 +374,20 @@ export const normalizeFormData = (
     personalNotes.forEach((note) => {
         const author = note.answers?.[Object.keys(note.answers)[0]]?.answer || 'Unknown';
         const content = note.answers?.[Object.keys(note.answers)[1]]?.answer || '';
-        const timestamp = new Date(note.created_at);
+
+        // Try to get timestamp from form answers first, fall back to submission time
+        const formTimestamp = getTimestampFromAnswers(note.answers);
+        const rawTimestamp = formTimestamp || note.created_at;
+        const timestampMs = getJotformTimestampMs(rawTimestamp);
+        const timestamp = parseJotformDate(rawTimestamp) || new Date(0);
 
         const personProfile = findOrCreatePerson(people, author);
         const noteRecord = {
             author,
             content,
             timestamp,
+            timestampMs,
+            createdAtRaw: rawTimestamp,
             noteId: note.id
         };
         personProfile.notes.push(noteRecord);
@@ -276,7 +407,12 @@ export const normalizeFormData = (
     anonymousTips.forEach((tip) => {
         const content = tip.answers?.[Object.keys(tip.answers)[0]]?.answer || '';
         const location = tip.answers?.[Object.keys(tip.answers)[1]]?.answer;
-        const timestamp = new Date(tip.created_at);
+
+        // Try to get timestamp from form answers first, fall back to submission time
+        const formTimestamp = getTimestampFromAnswers(tip.answers);
+        const rawTimestamp = formTimestamp || tip.created_at;
+        const timestampMs = getJotformTimestampMs(rawTimestamp);
+        const timestamp = parseJotformDate(rawTimestamp) || new Date(0);
 
         // Extract mentioned people from content
         const mentionedPeople = [];
@@ -284,6 +420,8 @@ export const normalizeFormData = (
             content,
             location,
             timestamp,
+            timestampMs,
+            createdAtRaw: rawTimestamp,
             mentionedPeople,
             tipId: tip.id
         };
@@ -321,12 +459,25 @@ export const normalizeFormData = (
  * Optionally filter by location
  */
 export const getChainOfSightings = (person, filterLocation) => {
+    const normalizedFilter = normalizeSearchText(filterLocation);
+
     const sightings = person.sightings.asSubject
-        .filter(sighting => !filterLocation || sighting.location.toLowerCase().includes(filterLocation.toLowerCase()))
-        .sort((a, b) => a.timestamp.getTime() - b.timestamp.getTime())
+        .filter((sighting) => {
+            if (!normalizedFilter) return true;
+            const normalizedLocation = normalizeSearchText(sighting.location);
+            if (!normalizedLocation) return false;
+
+            if (normalizedLocation.includes(normalizedFilter)) return true;
+
+            const filterTokens = normalizedFilter.split(' ').filter(Boolean);
+            return filterTokens.every((token) => normalizedLocation.includes(token));
+        })
+        .sort((a, b) => (a.timestampMs || 0) - (b.timestampMs || 0))
         .map(sighting => ({
             timestamp: sighting.timestamp,
-            location: sighting.location,
+            timestampMs: sighting.timestampMs || 0,
+            createdAtRaw: sighting.createdAtRaw,
+            location: toSafeText(sighting.location),
             spottedWith: sighting.spottedWith,
             description: sighting.description
         }));
