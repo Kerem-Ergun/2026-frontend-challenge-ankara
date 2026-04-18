@@ -1,0 +1,118 @@
+.form-section {
+    background-color: #f5f5f5;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 30px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.form-section h2 {
+    margin-top: 0;
+    color: #333;
+    border-bottom: 2px solid #007bff;
+    padding-bottom: 10px;
+}
+
+.form-section.loading,
+.form-section.error {
+    text-align: center;
+    padding: 40px 20px;
+    color: #666;
+}
+
+.form-section.error {
+    background-color: #ffe0e0;
+    color: #c00;
+    border-color: #c00;
+}
+
+.submission-count {
+    color: #666;
+    font-size: 14px;
+    margin: 10px 0;
+}
+
+.no-submissions {
+    text-align: center;
+    color: #999;
+    font-style: italic;
+    padding: 20px;
+}
+
+.submissions-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.submission-item {
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.submission-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    cursor: pointer;
+    background-color: #f9f9f9;
+    transition: background-color 0.2s;
+    border-bottom: 1px solid #eee;
+}
+
+.submission-header:hover {
+    background-color: #f0f0f0;
+}
+
+.submission-header h3 {
+    margin: 0;
+    color: #333;
+    font-size: 16px;
+}
+
+.expand-icon {
+    color: #007bff;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.submission-content {
+    padding: 15px;
+    background-color: #fff;
+}
+
+.submission-date {
+    font-size: 12px;
+    color: #999;
+    margin: 0 0 15px 0;
+}
+
+.submission-answers {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.answer-item {
+    border-left: 3px solid #007bff;
+    padding-left: 15px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+.answer-item strong {
+    color: #333;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.answer-item p {
+    margin: 0;
+    color: #666;
+    font-size: 14px;
+    word-break: break-word;
+}

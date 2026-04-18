@@ -1,0 +1,45 @@
+.App {
+  min-height: 100vh;
+  background-color: #f8f9fa;
+}
+
+.App-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 40px 20px;
+  text-align: center;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.App-header h1 {
+  margin: 0 0 10px 0;
+  font-size: 2.5em;
+  font-weight: bold;
+}
+
+.App-header p {
+  margin: 0;
+  font-size: 1.1em;
+  opacity: 0.9;
+}
+
+.App-main {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .App-header h1 {
+    font-size: 1.8em;
+  }
+
+  .App-header p {
+    font-size: 1em;
+  }
+
+  .App-main {
+    padding: 20px 10px;
+  }
+}
