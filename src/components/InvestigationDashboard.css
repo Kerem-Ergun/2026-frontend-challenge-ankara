@@ -1,15 +1,16 @@
 .investigation-dashboard {
-    background-color: #fff;
+    background-color: var(--surface);
     border-radius: 8px;
     padding: 25px;
     margin: 30px 0;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: var(--shadow);
+    color: var(--text);
 }
 
 .investigation-dashboard h2 {
     margin-top: 0;
-    color: #333;
-    border-bottom: 3px solid #e74c3c;
+    color: var(--text);
+    border-bottom: 3px solid var(--accent);
     padding-bottom: 15px;
     margin-bottom: 25px;
 }
@@ -18,13 +19,13 @@
 .investigation-dashboard.error {
     text-align: center;
     padding: 50px 20px;
-    color: #666;
+    color: var(--muted);
 }
 
 .investigation-dashboard.error {
-    background-color: #ffe0e0;
-    color: #c00;
-    border-left: 4px solid #c00;
+    background-color: rgba(220, 53, 69, 0.14);
+    color: #ffb4bc;
+    border-left: 4px solid #ff6b7a;
 }
 
 /* Dashboard Stats */
@@ -36,12 +37,29 @@
 }
 
 .stat-card {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
+    background: linear-gradient(135deg, var(--navy-700) 0%, var(--accent) 100%);
+    color: var(--text);
     padding: 20px;
     border-radius: 8px;
     text-align: center;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    box-shadow: var(--shadow);
+}
+
+.dashboard-stats .stat-card:nth-child(1) {
+    background: linear-gradient(135deg, var(--navy-700) 0%, var(--accent-blue) 100%);
+}
+
+.dashboard-stats .stat-card:nth-child(2) {
+    background: linear-gradient(135deg, var(--navy-700) 0%, var(--accent-yellow) 100%);
+    color: #0b1f3a;
+}
+
+.dashboard-stats .stat-card:nth-child(3) {
+    background: linear-gradient(135deg, var(--navy-700) 0%, var(--accent-red) 100%);
+}
+
+.dashboard-stats .stat-card:nth-child(4) {
+    background: linear-gradient(135deg, var(--navy-700) 0%, var(--navy-600) 100%);
 }
 
 .stat-card h3 {
@@ -66,10 +84,10 @@
 
 /* People List */
 .people-list h3 {
-    color: #333;
+    color: var(--text);
     margin-top: 0;
     padding-bottom: 10px;
-    border-bottom: 2px solid #e74c3c;
+    border-bottom: 2px solid var(--accent);
 }
 
 .people-grid {
@@ -82,8 +100,8 @@
 }
 
 .person-card {
-    background: #f9f9f9;
-    border: 2px solid #ddd;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
     border-radius: 8px;
     padding: 15px;
     cursor: pointer;
@@ -91,15 +109,15 @@
 }
 
 .person-card:hover {
-    background: #f0f0f0;
-    border-color: #e74c3c;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background: var(--surface-3);
+    border-color: var(--accent);
+    box-shadow: var(--shadow);
 }
 
 .person-card.selected {
-    background: #e74c3c;
-    color: white;
-    border-color: #c0392b;
+    background: linear-gradient(135deg, var(--navy-700) 0%, var(--accent-blue) 100%);
+    color: var(--text);
+    border-color: var(--accent);
 }
 
 .person-card h4 {
@@ -124,21 +142,21 @@
 }
 
 .connection-badge {
-    background: #e74c3c;
-    color: white;
+    background: rgba(255, 209, 102, 0.16);
+    color: var(--text);
     padding: 3px 8px;
     border-radius: 12px;
     font-size: 11px;
 }
 
 .person-card.selected .connection-badge {
-    background: rgba(255, 255, 255, 0.3);
+    background: rgba(255, 255, 255, 0.18);
 }
 
 /* Person Details */
 .person-details {
-    background: #f5f5f5;
-    border: 2px solid #e74c3c;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
     border-radius: 8px;
     padding: 20px;
     max-height: 600px;
@@ -147,13 +165,13 @@
 
 .person-details h3 {
     margin-top: 0;
-    color: #e74c3c;
+    color: var(--accent-yellow);
 }
 
 .detail-section {
     margin-bottom: 20px;
     padding-bottom: 15px;
-    border-bottom: 1px solid #ddd;
+    border-bottom: 1px solid var(--border);
 }
 
 .detail-section:last-child {
@@ -161,7 +179,7 @@
 }
 
 .detail-section h4 {
-    color: #333;
+    color: var(--text);
     margin: 0 0 10px 0;
 }
 
@@ -173,9 +191,15 @@
 .location-filter input {
     width: 80%;
     padding: 8px 12px;
-    border: 1px solid #ddd;
+    border: 1px solid var(--border);
     border-radius: 4px;
     font-size: 14px;
+    background: var(--navy-850);
+    color: var(--text);
+}
+
+.location-filter input::placeholder {
+    color: var(--muted);
 }
 
 /* Sightings Timeline */
@@ -195,8 +219,8 @@
 }
 
 .timeline-item.active .timeline-content {
-    background: #fff;
-    border: 1px solid #f2b5ad;
+    background: rgba(79, 140, 255, 0.14);
+    border: 1px solid rgba(79, 140, 255, 0.45);
     border-radius: 6px;
     padding: 8px 10px;
 }
@@ -215,10 +239,10 @@
 .timeline-dot {
     width: 12px;
     height: 12px;
-    background: #e74c3c;
+    background: var(--accent-red);
     border-radius: 50%;
     border: 3px solid white;
-    box-shadow: 0 0 0 2px #e74c3c;
+    box-shadow: 0 0 0 2px var(--accent-red);
 }
 
 .timeline-item::before {
@@ -228,7 +252,7 @@
     top: 20px;
     width: 2px;
     height: calc(100% + 10px);
-    background: #e74c3c;
+    background: var(--accent-blue);
     opacity: 0.3;
 }
 
@@ -243,49 +267,49 @@
 
 .timeline-time {
     font-weight: 600;
-    color: #333;
+    color: var(--text);
 }
 
 .timeline-location {
-    color: #e74c3c;
+    color: var(--accent-yellow);
     font-weight: 500;
 }
 
 .timeline-type {
-    color: #2c3e50;
+    color: var(--accent-blue);
     font-size: 12px;
     font-weight: 600;
 }
 
 .timeline-with {
-    color: #666;
+    color: var(--muted);
     font-style: italic;
 }
 
 .timeline-description {
-    color: #999;
+    color: var(--muted);
     font-size: 12px;
     margin-top: 5px;
 }
 
 .timeline-missing-coords {
-    color: #b26a00;
+    color: var(--accent-yellow);
     font-size: 11px;
     margin-top: 4px;
 }
 
 .map-empty-state {
-    background: #fff;
-    border: 1px dashed #ccc;
+    background: var(--navy-850);
+    border: 1px dashed var(--border);
     border-radius: 6px;
     padding: 10px 12px;
-    color: #666;
+    color: var(--muted);
     font-size: 13px;
 }
 
 .map-warning {
     margin: 10px 0 0;
-    color: #7f6000;
+    color: var(--accent-yellow);
     font-size: 12px;
 }
 
@@ -298,9 +322,9 @@
 }
 
 .list-item {
-    background: white;
+    background: var(--navy-850);
     padding: 10px 12px;
-    border-left: 3px solid #e74c3c;
+    border-left: 3px solid var(--accent);
     border-radius: 4px;
     display: flex;
     flex-direction: column;
@@ -309,50 +333,50 @@
 }
 
 .list-item .timestamp {
-    color: #999;
+    color: var(--muted);
     font-size: 11px;
     white-space: nowrap;
 }
 
 .list-item .content {
-    color: #333;
+    color: var(--text);
     font-weight: 500;
 }
 
 .list-item .notes {
-    color: #666;
+    color: var(--muted);
     font-size: 12px;
     font-style: italic;
-    background: #f5f5f5;
+    background: rgba(255, 255, 255, 0.04);
     padding: 6px 8px;
     border-radius: 3px;
     margin-top: 3px;
 }
 
 .message-item {
-    background: white;
+    background: var(--navy-850);
     padding: 12px;
     border-radius: 4px;
-    border-left: 3px solid #e74c3c;
+    border-left: 3px solid var(--accent);
     margin-bottom: 8px;
 }
 
 .message-time {
     font-size: 11px;
-    color: #999;
+    color: var(--muted);
     margin: 0;
 }
 
 .message-to {
     font-size: 12px;
-    color: #666;
+    color: var(--muted);
     margin: 3px 0;
     font-weight: 500;
 }
 
 .message-content {
     font-size: 13px;
-    color: #333;
+    color: var(--text);
     margin: 5px 0 0 0;
     font-style: italic;
 }
@@ -365,7 +389,7 @@
 }
 
 .person-link {
-    background: #e74c3c;
+    background: linear-gradient(135deg, var(--accent-blue) 0%, var(--accent-red) 100%);
     color: white;
     border: none;
     padding: 8px 12px;
@@ -376,9 +400,9 @@
 }
 
 .person-link:hover {
-    background: #c0392b;
+    background: linear-gradient(135deg, var(--accent-yellow) 0%, var(--accent-blue) 100%);
     transform: translateY(-2px);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    box-shadow: var(--shadow);
 }
 
 /* Export Section */
@@ -388,7 +412,7 @@
 }
 
 .export-btn {
-    background: #27ae60;
+    background: linear-gradient(135deg, var(--accent-red) 0%, var(--accent-blue) 100%);
     color: white;
     border: none;
     padding: 10px 20px;
@@ -400,8 +424,8 @@
 }
 
 .export-btn:hover {
-    background: #229954;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    background: linear-gradient(135deg, var(--accent-yellow) 0%, var(--accent-red) 100%);
+    box-shadow: var(--shadow);
 }
 
 /* Responsive Design */

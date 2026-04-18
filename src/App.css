@@ -1,14 +1,16 @@
 .App {
   min-height: 100vh;
-  background-color: #f8f9fa;
+  background: linear-gradient(180deg, var(--navy-950) 0%, var(--navy-900) 100%);
+  color: var(--text);
 }
 
 .App-header {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
+  background: linear-gradient(135deg, var(--navy-900) 0%, var(--navy-700) 55%, var(--accent-blue) 100%);
+  color: var(--text);
   padding: 40px 20px;
   text-align: center;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow);
+  border-bottom: 1px solid var(--border);
 }
 
 .App-header h1 {
@@ -30,16 +32,16 @@
   display: flex;
   gap: 10px;
   padding: 20px;
-  background-color: white;
-  border-bottom: 2px solid #e0e0e0;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  background-color: var(--surface);
+  border-bottom: 1px solid var(--border);
+  box-shadow: var(--shadow);
 }
 
 .tab-btn {
   padding: 12px 24px;
   border: none;
-  background-color: #f0f0f0;
-  color: #666;
+  background-color: var(--surface-2);
+  color: var(--text);
   font-size: 14px;
   font-weight: 500;
   cursor: pointer;
@@ -48,13 +50,13 @@
 }
 
 .tab-btn:hover {
-  background-color: #e0e0e0;
+  background-color: var(--surface-3);
 }
 
 .tab-btn.active {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, var(--accent-blue) 0%, var(--accent-2) 100%);
   color: white;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow);
 }
 
 .App-main {
@@ -64,10 +66,11 @@
 }
 
 .raw-submissions-dashboard {
-  background-color: #fff;
+  background-color: var(--surface);
   border-radius: 8px;
   padding: 20px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  box-shadow: var(--shadow);
+  color: var(--text);
 }
 
 .sub-tab-navigation {
@@ -75,15 +78,15 @@
   flex-wrap: wrap;
   gap: 8px;
   margin-bottom: 20px;
-  border-bottom: 1px solid #e6e6e6;
+  border-bottom: 1px solid var(--border);
   padding-bottom: 12px;
 }
 
 .sub-tab-btn {
   padding: 8px 14px;
-  border: 1px solid #ddd;
-  background-color: #f8f8f8;
-  color: #555;
+  border: 1px solid var(--border);
+  background-color: var(--surface-2);
+  color: var(--text);
   font-size: 13px;
   font-weight: 500;
   cursor: pointer;
@@ -92,13 +95,25 @@
 }
 
 .sub-tab-btn:hover {
-  background-color: #efefef;
+  background-color: var(--surface-3);
 }
 
 .sub-tab-btn.active {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, var(--accent-red) 0%, var(--accent-yellow) 100%);
   color: #fff;
   border-color: transparent;
+}
+
+.tab-navigation .tab-btn:nth-child(1) {
+  border-bottom: 2px solid var(--accent-blue);
+}
+
+.tab-navigation .tab-btn:nth-child(2) {
+  border-bottom: 2px solid var(--accent-yellow);
+}
+
+.tab-navigation .tab-btn:nth-child(3) {
+  border-bottom: 2px solid var(--accent-red);
 }
 
 /* Responsive design */
@@ -117,6 +132,7 @@
 
   .tab-navigation {
     padding: 10px;
+    flex-wrap: wrap;
   }
 
   .tab-btn {

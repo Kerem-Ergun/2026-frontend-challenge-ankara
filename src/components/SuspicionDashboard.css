@@ -1,15 +1,16 @@
 .suspicion-dashboard {
-    background-color: #fff;
+    background-color: var(--surface);
     border-radius: 8px;
     padding: 25px;
     margin: 30px 0;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: var(--shadow);
+    color: var(--text);
 }
 
 .suspicion-dashboard h2 {
     margin-top: 0;
-    color: #333;
-    border-bottom: 3px solid #e74c3c;
+    color: var(--text);
+    border-bottom: 3px solid var(--accent);
     padding-bottom: 15px;
     margin-bottom: 25px;
 }
@@ -21,10 +22,10 @@
 }
 
 .suspect-list h3 {
-    color: #333;
+    color: var(--text);
     margin-top: 0;
     padding-bottom: 10px;
-    border-bottom: 2px solid #e74c3c;
+    border-bottom: 2px solid var(--accent);
 }
 
 .suspect-grid {
@@ -37,22 +38,22 @@
 }
 
 .suspect-card {
-    border: 1px solid #ddd;
+    border: 1px solid var(--border);
     border-radius: 8px;
-    background: #f9f9f9;
+    background: var(--surface-2);
     padding: 12px;
     cursor: pointer;
     transition: all 0.2s ease;
 }
 
 .suspect-card:hover {
-    border-color: #e74c3c;
-    background: #fff;
+    border-color: var(--accent);
+    background: var(--surface-3);
 }
 
 .suspect-card.active {
-    border-color: #e74c3c;
-    box-shadow: 0 0 0 1px #e74c3c inset;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 1px var(--accent) inset;
 }
 
 .suspect-top {
@@ -65,6 +66,7 @@
 .suspect-name {
     margin: 0;
     font-weight: 600;
+    color: var(--text);
 }
 
 .suspect-score {
@@ -73,41 +75,41 @@
     padding: 4px 8px;
     font-size: 12px;
     font-weight: 700;
-    background: #ececec;
-    color: #333;
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--text);
 }
 
 .suspect-score.low {
-    background: #dff7e5;
-    color: #1f7a35;
+    background: rgba(79, 140, 255, 0.18);
+    color: #a8cbff;
 }
 
 .suspect-score.medium {
-    background: #fff3cd;
-    color: #8a6d1e;
+    background: rgba(255, 209, 102, 0.18);
+    color: #ffe39a;
 }
 
 .suspect-score.high {
-    background: #ffd6d6;
-    color: #992323;
+    background: rgba(255, 107, 122, 0.18);
+    color: #ffb4bc;
 }
 
 .suspect-sub {
     margin: 8px 0 0;
-    color: #666;
+    color: var(--muted);
     font-size: 12px;
 }
 
 .suspect-details {
-    background: #f5f5f5;
-    border: 2px solid #e74c3c;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
     border-radius: 8px;
     padding: 18px;
 }
 
 .suspect-details h3 {
     margin: 0 0 14px;
-    color: #e74c3c;
+    color: var(--accent-2);
 }
 
 .suspicion-meter {
@@ -118,7 +120,7 @@
     display: flex;
     justify-content: space-between;
     margin-bottom: 6px;
-    color: #333;
+    color: var(--text);
     font-size: 14px;
 }
 
@@ -126,7 +128,7 @@
     width: 100%;
     height: 14px;
     border-radius: 999px;
-    background: #e9ecef;
+    background: var(--navy-850);
     overflow: hidden;
 }
 
@@ -136,15 +138,15 @@
 }
 
 .meter-fill.low {
-    background: #2ea44f;
+    background: linear-gradient(90deg, var(--accent-blue) 0%, var(--navy-600) 100%);
 }
 
 .meter-fill.medium {
-    background: #f0ad4e;
+    background: linear-gradient(90deg, var(--accent-yellow) 0%, #f0ad4e 100%);
 }
 
 .meter-fill.high {
-    background: #dc3545;
+    background: linear-gradient(90deg, var(--accent-red) 0%, #dc3545 100%);
 }
 
 .meter-label {
@@ -154,15 +156,15 @@
 }
 
 .meter-label.low {
-    color: #2ea44f;
+    color: #a8cbff;
 }
 
 .meter-label.medium {
-    color: #d08b2f;
+    color: #ffe39a;
 }
 
 .meter-label.high {
-    color: #c82333;
+    color: #ffb4bc;
 }
 
 .red-flag-list {
@@ -172,17 +174,17 @@
 
 .red-flag-list li {
     margin-bottom: 8px;
-    color: #333;
+    color: var(--text);
     font-size: 14px;
 }
 
 .red-flag-points {
-    color: #e74c3c;
+    color: var(--accent-2);
     font-weight: 700;
 }
 
 .no-red-flags {
-    color: #666;
+    color: var(--muted);
     font-size: 14px;
 }
 

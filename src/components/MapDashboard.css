@@ -2,7 +2,8 @@
     width: 100%;
     border-radius: 8px;
     overflow: hidden;
-    border: 1px solid #ddd;
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow);
 }
 
 .suspect-map {
@@ -15,7 +16,7 @@
     align-items: center;
     justify-content: center;
     border-radius: 50%;
-    border: 2px solid #fff;
+    border: 2px solid rgba(255, 255, 255, 0.85);
     font-weight: 700;
     color: #fff;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
@@ -27,16 +28,20 @@
 }
 
 .map-event-marker--sighting {
-    background: #e74c3c;
+    background: var(--accent-red);
 }
 
 .map-event-marker--checkin {
-    background: #2d7ff9;
+    background: var(--accent-blue);
 }
 
 .map-popup p {
     margin: 4px 0;
     font-size: 12px;
+}
+
+.leaflet-container {
+    background: var(--navy-950);
 }
 
 @media (max-width: 768px) {
