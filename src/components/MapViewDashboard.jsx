@@ -224,7 +224,7 @@ const MapViewDashboard = ({
         <div className="investigation-dashboard">
             <h2>🗺️ Map View Dashboard</h2>
 
-            <div className="dashboard-content">
+            <div className={`dashboard-content ${selectedPerson ? 'has-selection' : 'no-selection'}`}>
                 <div className="people-list">
                     <h3>People of Interest</h3>
                     <div className="people-grid">

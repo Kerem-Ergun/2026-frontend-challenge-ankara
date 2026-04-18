@@ -77,9 +77,17 @@
 /* Dashboard Content Layout */
 .dashboard-content {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr;
     gap: 25px;
     margin-bottom: 30px;
+}
+
+.dashboard-content.has-selection {
+    grid-template-columns: minmax(0, 1.45fr) minmax(340px, 0.95fr);
+}
+
+.dashboard-content.no-selection .people-list {
+    width: 100%;
 }
 
 /* People List */
@@ -92,11 +100,18 @@
 
 .people-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
     gap: 12px;
-    max-height: 600px;
+    flex: 1;
+    max-height: none;
     overflow-y: auto;
     padding-right: 10px;
+}
+
+.people-list {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
 }
 
 .person-card {
@@ -160,6 +175,7 @@
     border-radius: 8px;
     padding: 20px;
     max-height: 600px;
+    min-height: 600px;
     overflow-y: auto;
 }
 
@@ -434,12 +450,17 @@
         grid-template-columns: 1fr;
     }
 
+    .dashboard-content.has-selection {
+        grid-template-columns: 1fr;
+    }
+
     .people-grid {
         grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
     }
 
     .person-details {
         max-height: none;
+        min-height: auto;
     }
 }
 
